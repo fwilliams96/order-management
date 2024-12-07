@@ -1,0 +1,439 @@
+openapi: 3.0.0
+info:
+  title: Order Management API
+  version: 1.0.0
+  description: API that provides order management operations for FakeCompany
+tags:
+  - name: Order Management
+    description: Order Management API
+paths:
+  /api/v1/categories:
+    get:
+      tags:
+        - Categories get v1
+      operationId: get-categories
+      summary: GET categories
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Categories'
+  /api/v1/products:
+    get:
+      tags:
+        - Products get v1
+      operationId: get-products
+      summary: GET products
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products'
+  /api/v1/orders:
+    post:
+      tags:
+        - Orders post v1
+      operationId: post-orders
+      summary: POST orders
+      requestBody:
+        description: Order data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewOrder'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/orders/{orderId}/cancel:
+    post:
+      tags:
+        - Order cancellation post v1
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Order id
+      operationId: post-order-cancellation
+      summary: POST order cancellation
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/orders/{orderId}/finish:
+    post:
+      tags:
+        - Order finalization post v1
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Order id
+      operationId: post-order-finalization
+      summary: POST order finalization
+      requestBody:
+        description: Order finalization
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderPayment'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/orders/{orderId}/products:
+    post:
+      tags:
+        - Order product post v1
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Order id
+      operationId: post-order-product
+      summary: POST order products
+      requestBody:
+        description: Order product
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/orders/{orderId}/products/{productId}:
+    delete:
+      tags:
+        - Order product delete v1
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Order id
+        - in: path
+          name: productId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Product id
+      operationId: delete-order-product
+      summary: DELETE order products
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/orders/{orderId}/buyer-details:
+    patch:
+      tags:
+        - Order buyer details patch v1
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Order id
+      operationId: patch-order-buyer-details
+      summary: PATCH order buyer details
+      requestBody:
+        description: Order buyer details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderBuyerDetails'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Categories:
+      type: array
+      description: Categories
+      items:
+        $ref: '#/components/schemas/Category'
+    Category:
+      description: Category
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Category id
+        name:
+          type: string
+          minLength: 1
+          description: Category name
+        parent:
+          $ref: '#/components/schemas/Category'
+      required:
+        - id
+        - name
+    Products:
+      type: array
+      description: Products
+      items:
+        $ref: '#/components/schemas/Product'
+    Product:
+      description: Product
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Product id
+        name:
+          type: string
+          minLength: 1
+          description: Product name
+        price:
+          type: number
+          format: double
+          description: Product price
+        category:
+          $ref: '#/components/schemas/Category'
+        image:
+          $ref: '#/components/schemas/ProductImage'
+      required:
+        - id
+        - name
+        - price
+        - category
+        - image
+    ProductImage:
+      description: Product image
+      type: object
+      properties:
+        url:
+          type: string
+          description: Product image url
+    NewOrder:
+      description: New order
+      type: object
+      properties:
+        productsIds:
+          $ref: '#/components/schemas/ProductsIds'
+        seat:
+          $ref: '#/components/schemas/OrderSeat'
+      required:
+        - seat
+    Order:
+      description: Order
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Order id
+        products:
+          $ref: '#/components/schemas/Products'
+        paymentDetails:
+          $ref: '#/components/schemas/PaymentDetails'
+        status:
+          type: integer
+          enum: [
+            0,
+            1,
+            2
+          ]
+          x-enum-varnames: [
+            OPEN,
+            DROPPED,
+            FINISHED
+          ]
+        buyerDetails:
+          $ref: '#/components/schemas/OrderBuyerDetails'
+    PaymentDetails:
+      allOf:
+        - $ref: '#/components/schemas/OrderPayment'
+        - type: object
+          description: Payment details
+          properties:
+            totalPrice:
+              type: number
+              format: double
+              description: Total price
+            paymentDate:
+              type: string
+              format: date-time
+              description: Payment date
+              x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonFormat(shape = com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd''T''HH:mm:ss''Z''")'
+          required:
+            - fileCode
+          additionalProperties: false
+    OrderBuyerDetails:
+      description: Order buyer details
+      type: object
+      properties:
+        email:
+          type: string
+          description: Buyer email
+        seat:
+          $ref: '#/components/schemas/OrderSeat'
+      minProperties: 1
+    OrderSeat:
+      description: Order seat
+      type: object
+      properties:
+        seatLetter:
+          type: string
+          minLength: 1
+          maxLength: 1
+          description: Seat letter
+        seatNumber:
+          type: integer
+          format: int32
+          description: Seat number
+      required:
+        - seatLetter
+        - seatNumber
+    ProductId:
+      description: Product id
+      type: object
+      properties:
+        productId:
+          type: string
+          format: uuid
+          description: Product id
+      required:
+        - productId
+    ProductsIds:
+      description: Products ids
+      type: array
+      items:
+        type: string
+        format: uuid
+    OrderPayment:
+      description: Order payment
+      type: object
+      properties:
+        cardToken:
+          type: string
+          description: Card token
+        status:
+          type: integer
+          enum: [
+            0,
+            1,
+            2,
+            3
+          ]
+          x-enum-varnames: [
+            PENDING,
+            PAID,
+            FAILED,
+            CANCELLED
+          ]
+        gateway:
+          type: string
+          enum: [
+            STRIPE
+          ]
+          x-enum-varnames: [
+            STRIPE
+          ]
+      required:
+        - cardToken
+        - status
+        - gateway
+    Error:
+      type: object
+      properties:
+        status:
+          type: integer
+          format: int32
+        error:
+          type: string
+        path:
+          type: string
+        timestamp:
+          type: integer
+          format: int64
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorMessage'
+    ErrorMessage:
+      type: object
+      properties:
+        message:
+          type: string
+        code:
+          type: string

@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @Builder
-public class Image {
+public class ProductImage {
 
     private String url;
 

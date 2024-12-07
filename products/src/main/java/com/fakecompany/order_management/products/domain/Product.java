@@ -16,7 +16,7 @@ public class Product {
     private UUID id;
     private String name;
     private BigDecimal price;
+    private ProductImage image;
     private Category category;
-    private Image image;
 
 }

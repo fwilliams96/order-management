@@ -7,9 +7,8 @@ import lombok.ToString;
 @Getter
 @ToString
 @Builder
-public class BuyerDetails {
+public class OrderSeat {
 
-    private String email;
     private Character seatLetter;
     private Integer seatNumber;
 

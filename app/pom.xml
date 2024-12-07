@@ -21,23 +21,21 @@
         <maven.compiler.source>23</maven.compiler.source>
         <maven.compiler.target>23</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <swagger-annotations.version>1.6.0</swagger-annotations.version>
-        <openapi-generator-api-base-package-name>com.fakecompany.orders</openapi-generator-api-base-package-name>
-        <openapi-generator-api-package-name>com.fakecompany.orders.api</openapi-generator-api-package-name>
-        <openapi-generator-model-package-name>com.fakecompany.orders.api.dto</openapi-generator-model-package-name>
+        <swagger-annotations.version>2.2.7</swagger-annotations.version>
+        <openapi-generator-api-base-package-name>com.fakecompany.order_management</openapi-generator-api-base-package-name>
+        <openapi-generator-api-package-name>com.fakecompany.order_management.api</openapi-generator-api-package-name>
+        <openapi-generator-model-package-name>com.fakecompany.order_management.api.dto</openapi-generator-model-package-name>
         <openapi-generator-swagger-file-path>${project.basedir}/src/main/resources/swagger.yml</openapi-generator-swagger-file-path>
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>com.fakecompany</groupId>
             <artifactId>orders</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
-
         <dependency>
-            <groupId>io.swagger</groupId>
+            <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>
             <version>${swagger-annotations.version}</version>
         </dependency>
@@ -46,10 +44,34 @@
             <artifactId>jackson-databind-nullable</artifactId>
             <version>0.2.4</version>
         </dependency>
-
     </dependencies>
+
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
@@ -60,7 +82,6 @@
                 <plugin>
                     <groupId>org.openapitools</groupId>
                     <artifactId>openapi-generator-maven-plugin</artifactId>
-                    <version>4.3.1</version>
                     <executions>
                         <execution>
                             <goals>
@@ -73,7 +94,16 @@
                                 <modelNameSuffix>Dto</modelNameSuffix>
                                 <generateApiTests>false</generateApiTests>
                                 <generateModelTests>false</generateModelTests>
+                                <importMappings>
+                                    <!--<importMapping>ErrorDto=com.allianz.bfi.operations.support.api.dto.ErrorDTO</importMapping>-->
+                                    <importMapping>java.time.OffsetDateTime=java.time.LocalDateTime</importMapping>
+                                </importMappings>
+                                <typeMappings>
+                                    <!--<typeMapping>ErrorResponseDto=ErrorDto</typeMapping>-->
+                                    <typeMapping>OffsetDateTime=LocalDateTime</typeMapping>
+                                </typeMappings>
                                 <configOptions>
+                                    <useJakartaEe>true</useJakartaEe>
                                     <basePackage>${openapi-generator-api-base-package-name}</basePackage>
                                     <modelPackage>${openapi-generator-model-package-name}</modelPackage>
                                     <apiPackage>${openapi-generator-api-package-name}</apiPackage>
