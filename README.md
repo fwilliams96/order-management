@@ -1,7 +1,11 @@
 # Order management API
 
 ## Execution
-Just type docker-compose up -d in a terminal where you have Docker and Docker Compose downloaded, this will create the app image using the Dockerfile (as it's not uploaded to any Docker repository).
+Create a new .env file following the .env.example file, to generate a key you can do it using the following command:
+
+openssl rand -base64 64 | tr -d '\n'
+
+After that, replace it in your JWT.SECRET property and type "docker-compose up -d" in a terminal where you have Docker and Docker Compose downloaded, this will create the app image using the Dockerfile (as it's not uploaded to any Docker repository).
 
 ## Structure
 This project consist on a multi-module Maven project, there is a single Spring Boot application but uses many modules.

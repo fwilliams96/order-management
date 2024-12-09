@@ -4,26 +4,13 @@ services:
     container_name: order-management
     build:
       context: ./
-      dockerfile: ./apps/order_management_app/Dockerfile
+      dockerfile: ./Dockerfile
     ports:
       - "8080:8080"
     environment:
       - PORT=8080
-      - MONGO_URI=mongodb://root:example@mongodb:27017  # Local connection
-    depends_on:
-      - mongodb
-    restart: always
-  auth:
-    container_name: auth
-    build:
-      context: ./
-      dockerfile: ./apps/auth_app/Dockerfile
-    ports:
-      - "8081:8081"
-    environment:
-      - PORT=8081
+      - MONGO_URI=mongodb://mongodb:27017/order-management  # Local connection
       - JWT_SECRET=${JWT_SECRET}
-      - MONGO_URI=mongodb://root:example@mongodb:27017  # Local connection
     depends_on:
       - mongodb
     restart: always
@@ -32,9 +19,8 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - ./mongodb_data:/data/db  # Store mongodb data
+      - mongodata:/data/db
       - ./init.js:/docker-entrypoint-initdb.d/init.js # Add mock products and categories
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=example
     restart: always
+volumes:
+  mongodata:
