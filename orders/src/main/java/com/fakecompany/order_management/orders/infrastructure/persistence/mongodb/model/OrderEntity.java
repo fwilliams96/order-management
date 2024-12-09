@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,10 +14,12 @@ import java.util.UUID;
 @Document(collection = "orders")
 public class OrderEntity extends UuidIdentifiedEntity {
 
-    private List<UUID> productsIds;
+    private List<UUID> productIds;
     private UUID paymentId;
     private int status = 0;
     private OrderBuyerDetailsEntity buyerDetails;
+    private UUID userId;
+    private BigDecimal totalPrice;
 
     @Data
     public static class OrderBuyerDetailsEntity {

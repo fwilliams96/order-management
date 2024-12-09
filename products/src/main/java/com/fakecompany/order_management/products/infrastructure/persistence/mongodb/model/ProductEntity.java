@@ -17,6 +17,7 @@ public class ProductEntity extends UuidIdentifiedEntity {
     private BigDecimal price;
     private ProductImageEntity image;
     private UUID categoryId;
+    private Integer stock;
 
     @Data
     public static class ProductImageEntity {

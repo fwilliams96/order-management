@@ -4,6 +4,7 @@ import com.fakecompany.order_management.payments.domain.Payment;
 import com.fakecompany.order_management.products.domain.Product;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -39,6 +40,8 @@ public class Order {
     private Payment paymentDetails;
     private OrderStatus status;
     private OrderBuyerDetails buyerDetails;
+    private UUID userId;
+    private BigDecimal totalPrice;
 
     public void updateSeat(OrderSeat orderSeat) {
         if (buyerDetails == null) {
@@ -73,6 +76,20 @@ public class Order {
             products = new ArrayList<>();
         }
         products.add(product);
+        if (totalPrice == null) {
+            totalPrice = BigDecimal.ZERO;
+        }
+        totalPrice = totalPrice.add(product.getPrice());
+    }
+
+    public void deleteProduct(Product product) {
+        if (products == null) {
+            return;
+        }
+        products.remove(product);
+        if (totalPrice != null) {
+            totalPrice = totalPrice.subtract(product.getPrice());
+        }
     }
 
 }

@@ -10,4 +10,6 @@ public interface ProductRepository {
 
     Optional<Product> findById(UUID id);
 
+    Product update(Product product);
+
 }

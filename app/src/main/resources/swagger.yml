@@ -7,6 +7,46 @@ tags:
   - name: Order Management
     description: Order Management API
 paths:
+  /api/v1/auth/register:
+    post:
+      tags:
+        - Authentication register post v1
+      operationId: post-authentication-register
+      summary: POST authentication register
+      requestBody:
+        description: New user
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JWToken'
+  /api/v1/auth/login:
+    post:
+      tags:
+        - Authentication login post v1
+      operationId: post-authentication-login
+      summary: POST authentication login
+      requestBody:
+        description: New user
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCredentials'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JWToken'
   /api/v1/categories:
     get:
       tags:
@@ -224,6 +264,37 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    NewUser:
+      allOf:
+        - $ref: '#/components/schemas/UserCredentials'
+        - type: object
+          description: Payment details
+          properties:
+            name:
+              type: string
+              description: User name
+          required:
+            - name
+    UserCredentials:
+      type: object
+      description: User
+      properties:
+        email:
+          type: string
+          description: Email
+          format: email
+        password:
+          type: string
+          description: Password
+      required:
+        - email
+        - password
+    JWToken:
+      type: object
+      description: JSON Web Token
+      properties:
+        accessToken:
+          type: string
     Categories:
       type: array
       description: Categories
@@ -271,6 +342,10 @@ components:
           $ref: '#/components/schemas/Category'
         image:
           $ref: '#/components/schemas/ProductImage'
+        stock:
+          type: integer
+          format: int32
+          description: Product stock
       required:
         - id
         - name
@@ -288,8 +363,8 @@ components:
       description: New order
       type: object
       properties:
-        productsIds:
-          $ref: '#/components/schemas/ProductsIds'
+        productIds:
+          $ref: '#/components/schemas/ProductIds'
         seat:
           $ref: '#/components/schemas/OrderSeat'
       required:
@@ -320,6 +395,10 @@ components:
           ]
         buyerDetails:
           $ref: '#/components/schemas/OrderBuyerDetails'
+        totalPrice:
+          type: number
+          format: double
+          description: Total order price
     PaymentDetails:
       allOf:
         - $ref: '#/components/schemas/OrderPayment'
@@ -374,8 +453,8 @@ components:
           description: Product id
       required:
         - productId
-    ProductsIds:
-      description: Products ids
+    ProductIds:
+      description: Product ids
       type: array
       items:
         type: string

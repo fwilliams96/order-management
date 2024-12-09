@@ -9,9 +9,12 @@ import com.fakecompany.order_management.orders.application.create.OrderCreator;
 import com.fakecompany.order_management.orders.domain.NewOrder;
 import com.fakecompany.order_management.orders.domain.Order;
 import com.fakecompany.order_management.orders.domain.OrderSeat;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.UUID;
 
 
 @RestController
@@ -20,12 +23,15 @@ public class OrdersPostV1Controller implements OrdersPostV1Api {
 
     private final OrderCreator orderCreator;
     private final OrderToOrderDtoMapper orderToOrderDtoMapper;
+    private final HttpServletRequest request;
 
     @Override
     public ResponseEntity<OrderDto> postOrders(NewOrderDto newOrderDto) {
+        UUID userId = (UUID) request.getAttribute("userId");
         Order order = orderCreator.create(
                 NewOrder.builder()
-                        .productsIds(newOrderDto.getProductsIds())
+                        .userId(userId)
+                        .productIds(newOrderDto.getProductIds())
                         .seat(mapOrderSeatDtoToOrderSeat(newOrderDto.getSeat()))
                         .build()
         );

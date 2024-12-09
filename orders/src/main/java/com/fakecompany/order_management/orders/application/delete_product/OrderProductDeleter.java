@@ -2,6 +2,7 @@ package com.fakecompany.order_management.orders.application.delete_product;
 
 import com.fakecompany.order_management.orders.domain.Order;
 import com.fakecompany.order_management.orders.domain.OrderNotFoundError;
+import com.fakecompany.order_management.orders.domain.OrderNotOpenError;
 import com.fakecompany.order_management.orders.domain.OrderRepository;
 import com.fakecompany.order_management.products.domain.Product;
 import com.fakecompany.order_management.products.domain.ProductNotFoundError;
@@ -18,11 +19,16 @@ public class OrderProductDeleter {
 
     public Order delete(UUID orderId, UUID productId) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundError(orderId));
+
+        if (Order.OrderStatus.OPEN != order.getStatus()) {
+            throw new OrderNotOpenError(orderId);
+        }
+
         Product product = order.getProducts().stream()
                 .filter(p -> p.getId().equals(productId))
                 .findAny()
                 .orElseThrow(() -> new ProductNotFoundError(productId));
-        order.getProducts().remove(product);
+        order.deleteProduct(product);
         return orderRepository.update(order);
     }
 

@@ -14,6 +14,7 @@ COPY categories/pom.xml categories/
 COPY orders/pom.xml orders/
 COPY payments/pom.xml payments/
 COPY products/pom.xml products/
+COPY shared/pom.xml shared/
 
 # Download dependencies
 RUN ./mvnw dependency:go-offline -B

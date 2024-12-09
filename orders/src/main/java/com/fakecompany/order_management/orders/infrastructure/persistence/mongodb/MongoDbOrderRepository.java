@@ -6,6 +6,7 @@ import com.fakecompany.order_management.orders.domain.OrderRepository;
 import com.fakecompany.order_management.orders.domain.OrderSeat;
 import com.fakecompany.order_management.orders.infrastructure.persistence.mongodb.model.OrderEntity;
 import com.fakecompany.order_management.orders.infrastructure.persistence.mongodb.repository.SpringDataMongoDbOrderRepository;
+import com.fakecompany.order_management.payments.domain.Payment;
 import com.fakecompany.order_management.payments.domain.PaymentRepository;
 import com.fakecompany.order_management.products.domain.Product;
 import com.fakecompany.order_management.products.domain.ProductRepository;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -46,8 +48,10 @@ public class MongoDbOrderRepository implements OrderRepository {
         orderEntity.setId(order.getId());
         orderEntity.setStatus(order.getStatus().getValue());
         orderEntity.setPaymentId(order.getPaymentDetails() != null ? order.getPaymentDetails().getId() : null);
-        orderEntity.setProductsIds(getProductIds(order.getProducts()));
+        orderEntity.setProductIds(getProductIds(order.getProducts()));
         orderEntity.setBuyerDetails(mapBuyerDetailsToBuyerDetailsEntity(order.getBuyerDetails()));
+        orderEntity.setUserId(order.getUserId());
+        orderEntity.setTotalPrice(order.getTotalPrice());
         return orderEntity;
     }
 
@@ -75,7 +79,7 @@ public class MongoDbOrderRepository implements OrderRepository {
         if (CollectionUtils.isEmpty(products)) {
             return Collections.emptyList();
         }
-        return products.stream().map(Product::getId).toList();
+        return products.stream().map(Product::getId).collect(Collectors.toList());
     }
 
     private Order mapOrderEntityToOrder(OrderEntity orderEntity) {
@@ -84,9 +88,32 @@ public class MongoDbOrderRepository implements OrderRepository {
         }
         return Order.builder()
                 .id(orderEntity.getId())
+                .userId(orderEntity.getUserId())
                 .status(Order.OrderStatus.from(orderEntity.getStatus()))
-                .products(findProducts(orderEntity.getProductsIds()))
-                .paymentDetails(paymentRepository.findById(orderEntity.getPaymentId()).orElse(null))
+                .products(findProducts(orderEntity.getProductIds()))
+                .paymentDetails(getPaymentDetails(orderEntity.getPaymentId()))
+                .buyerDetails(mapBuyerDetailsEntityToBuyerDetails(orderEntity.getBuyerDetails()))
+                .totalPrice(orderEntity.getTotalPrice())
+                .build();
+    }
+
+    private OrderBuyerDetails mapBuyerDetailsEntityToBuyerDetails(OrderEntity.OrderBuyerDetailsEntity buyerDetailsEntity) {
+        if (buyerDetailsEntity == null) {
+            return null;
+        }
+        return OrderBuyerDetails.builder()
+                .email(buyerDetailsEntity.getEmail())
+                .seat(mapSeatEntityToSeat(buyerDetailsEntity.getSeat()))
+                .build();
+    }
+
+    private OrderSeat mapSeatEntityToSeat(OrderEntity.OrderSeatEntity seat) {
+        if (seat == null) {
+            return null;
+        }
+        return OrderSeat.builder()
+                .seatLetter(seat.getSeatLetter())
+                .seatNumber(seat.getSeatNumber())
                 .build();
     }
 
@@ -98,6 +125,13 @@ public class MongoDbOrderRepository implements OrderRepository {
                 .map(productRepository::findById)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .toList();
+                .collect(Collectors.toList());
+    }
+
+    private Payment getPaymentDetails(UUID paymentId) {
+        if (paymentId == null) {
+            return null;
+        }
+        return paymentRepository.findById(paymentId).orElse(null);
     }
 }

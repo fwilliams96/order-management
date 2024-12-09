@@ -6,6 +6,7 @@ import com.fakecompany.order_management.api.dto.ProductIdDto;
 import com.fakecompany.order_management.mappers.OrderToOrderDtoMapper;
 import com.fakecompany.order_management.orders.application.add_product.OrderProductAdder;
 import com.fakecompany.order_management.orders.domain.Order;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;

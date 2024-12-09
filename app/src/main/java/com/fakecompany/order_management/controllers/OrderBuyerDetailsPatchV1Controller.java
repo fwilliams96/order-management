@@ -9,7 +9,6 @@ import com.fakecompany.order_management.orders.application.update_buyer_details.
 import com.fakecompany.order_management.orders.domain.Order;
 import com.fakecompany.order_management.orders.domain.OrderBuyerDetails;
 import com.fakecompany.order_management.orders.domain.OrderSeat;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;

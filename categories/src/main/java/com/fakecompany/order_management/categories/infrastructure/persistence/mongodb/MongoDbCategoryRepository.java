@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -20,7 +21,7 @@ public class MongoDbCategoryRepository implements CategoryRepository {
     @Override
     public List<Category> findAll() {
         List<CategoryEntity> all = springDataMongoDbCategoryRepository.findAll();
-        return all.stream().map(this::mapCategoryEntityToCategory).toList();
+        return all.stream().map(this::mapCategoryEntityToCategory).collect(Collectors.toList());
     }
 
     @Override

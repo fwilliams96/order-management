@@ -12,7 +12,8 @@ import java.util.UUID;
 @Builder
 public class NewOrder {
 
-    private List<UUID> productsIds;
+    private List<UUID> productIds;
     private OrderSeat seat;
+    private UUID userId;
 
 }

@@ -18,5 +18,12 @@ public class Product {
     private BigDecimal price;
     private ProductImage image;
     private Category category;
+    private Integer stock;
+
+    public void reduceStock(Integer units) {
+        if (stock != null) {
+            stock -= units;
+        }
+    }
 
 }

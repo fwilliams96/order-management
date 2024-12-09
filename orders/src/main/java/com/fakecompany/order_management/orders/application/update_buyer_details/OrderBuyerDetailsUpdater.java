@@ -1,9 +1,6 @@
 package com.fakecompany.order_management.orders.application.update_buyer_details;
 
-import com.fakecompany.order_management.orders.domain.Order;
-import com.fakecompany.order_management.orders.domain.OrderBuyerDetails;
-import com.fakecompany.order_management.orders.domain.OrderNotFoundError;
-import com.fakecompany.order_management.orders.domain.OrderRepository;
+import com.fakecompany.order_management.orders.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +14,11 @@ public class OrderBuyerDetailsUpdater {
 
     public Order update(UUID orderId, OrderBuyerDetails orderBuyerDetails) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundError(orderId));
+
+        if (Order.OrderStatus.OPEN != order.getStatus()) {
+            throw new OrderNotOpenError(orderId);
+        }
+
         if (orderBuyerDetails.getSeat() != null) {
             order.updateSeat(orderBuyerDetails.getSeat());
         }
